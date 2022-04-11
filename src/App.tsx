@@ -1,38 +1,57 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './App.css';
-import {Todolist} from "./Todolist";
+import {InArrayPropsType, Todolist} from "./Todolist";
+import {v1} from "uuid";
+
+export type filterValueType = "All" | "Active" | "Completed"
 
 function App() {
-    const arr1=[
-        {id: 1, title: "HTML&CSS1", isDone: true},
-        {id: 2, title: "JS1", isDone: true},
-        {id: 3, title: "ReactJS1", isDone: false},
-        {id: 4, title: "Rest API1", isDone: false},
 
-    ]
+    const [tasks, setTasks] = useState<Array<InArrayPropsType>>(
+        [
+            {id: v1(), title: "HTML&CSS1", isDone: true},
+            {id: v1(), title: "JS1", isDone: true},
+            {id: v1(), title: "ReactJS1", isDone: false},
+            {id: v1(), title: "Rest API1", isDone: false},
+        ])
+    console.log(tasks)
+    const removeOneTask = (id: string) => {
+        setTasks(tasks.filter((el)=> el.id !== id))
+       console.log(id)
+    }
+    const addTask = () => {
+        let newTask = {id: v1(), title: "New Task", isDone: false}
+        let newTasks = [newTask, ...tasks]
+    }
+    let[filterValue, setFilterValue] = useState<filterValueType>("All")
+    let changeFilter = tasks
+    if (filterValue === "Active") {
+        changeFilter = tasks.filter((el)=> el.isDone )
+    }
+    if (filterValue === "Completed") {
+        changeFilter = tasks.filter((el)=> !el.isDone)
+    }
 
-    const arr2=[
-        {id: 1, title: "HTML&CSS22", isDone: true},
-        {id: 2, title: "JS22", isDone: true},
-        {id: 3, title: "ReactJS22", isDone: false},
-        {id: 4, title: "Rest API22", isDone: false},
-        {id: 5, title: "GraphQL22", isDone: false},
-    ]
-    const arr3=[
-        {id: 1, title: "HTML&CSS333", isDone: true},
-        {id: 2, title: "JS333", isDone: true},
-        {id: 3, title: "ReactJS333", isDone: false},
-        {id: 4, title: "Rest API333", isDone: false},
-        {id: 5, title: "GraphQL333", isDone: false},
-        {id: 5, title: "GraphQL333", isDone: false},
-    ]
+const filterTask = (filterValue:filterValueType) => {
+        setFilterValue(filterValue)
+
+}
+
+
 
 
     return (
         <div className="App">
-            <Todolist topic={"Simple string"} arr={arr1}/>
-            <Todolist topic={"Second string"} arr={arr2}/>
-            <Todolist topic={"Third string"} arr={arr3}/>
+            <Todolist topic={"Simple string"}
+                      task={changeFilter}
+                      removeOneTask={removeOneTask}
+                      filterTask = {filterTask}
+                      addTask = {addTask}
+
+
+
+            />
+
 
         </div>
     );
