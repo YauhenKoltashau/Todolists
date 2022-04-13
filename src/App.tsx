@@ -19,17 +19,18 @@ function App() {
         setTasks(tasks.filter((el)=> el.id !== id))
        console.log(id)
     }
-    const addTask = () => {
-        let newTask = {id: v1(), title: "New Task", isDone: false}
+    const addTask = (title: string) => {
+        let newTask = {id: v1(), title: title, isDone: false}
         let newTasks = [newTask, ...tasks]
+        setTasks((newTasks))
     }
     let[filterValue, setFilterValue] = useState<filterValueType>("All")
     let changeFilter = tasks
     if (filterValue === "Active") {
-        changeFilter = tasks.filter((el)=> el.isDone )
+        changeFilter = tasks.filter((el)=> !el.isDone )
     }
     if (filterValue === "Completed") {
-        changeFilter = tasks.filter((el)=> !el.isDone)
+        changeFilter = tasks.filter((el)=> el.isDone)
     }
 
 const filterTask = (filterValue:filterValueType) => {
