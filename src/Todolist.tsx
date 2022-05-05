@@ -1,4 +1,4 @@
-import React, {ChangeEvent, ChangeEventHandler, KeyboardEvent, useState} from "react";
+import React, {ChangeEvent} from "react";
 import {filterValueType} from "./App";
 import styles from "./App.module.css"
 import {EditableSpan} from "./EditableSpan";
@@ -59,10 +59,7 @@ export const Todolist = (props: TodolistPropsType) => {
     const addTask = (title: string) => {
         props.addTask(title, props.tlId)
     }
-    const changeTitle = (title:string, id: string) => {
-        props.changeTitleTask(title, id,props.tlId )
 
-    }
     const changeTitleTodolist = (title: string) => {
       props.changeTitleTodolist(title,props.tlId)
     }
@@ -94,6 +91,10 @@ export const Todolist = (props: TodolistPropsType) => {
                     const onChangeClickCheckboxHandler = (e: ChangeEvent<HTMLInputElement>) => {
                         props.changeStatus(el.id, e.currentTarget.checked, props.tlId)
                     }
+                    const changeTitle = (title:string) => {
+                        props.changeTitleTask(title, el.id,props.tlId )
+
+                    }
                     return (
                         <li key={index} className={el.isDone ? styles.isDone : ""}>
                             <button onClick={onClickRemoveTaskHandler}>X</button>
@@ -103,7 +104,7 @@ export const Todolist = (props: TodolistPropsType) => {
                             <EditableSpan
                                 key={el.id}
                                 title={el.title}
-                                editTitle={(title)=>changeTitle(title,el.id)}
+                                editTitle={changeTitle}
 
 
 
