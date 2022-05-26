@@ -3,15 +3,24 @@ import './App.css';
 import {InArrayPropsType, Todolist} from "./Todolist";
 import {v1} from "uuid";
 import {AddItemForm} from "./AddItemForm";
+import {
+    addTodolistAC,
+    changeTitleTodolistAC, filterValueType,
+    removeTodolistAC,
+    TodolistsReducer,
+    TodolistsType
+} from "./TodolistsReducer";
+import {
+    addTaskAC,
+    changeStatusTaskAC,
+    changeTitleTaskAC,
+    removeTaskAC,
+    TasksReducer
+} from "./TasksReducer";
 
 
-export type filterValueType = "All" | "Active" | "Completed"
-type TodolistsType = {
-    id: string
-    title: string
-    filter: filterValueType
-}
-type TaskType = {
+
+export type TasksType = {
     [key: string]: Array<InArrayPropsType>
 
 
@@ -22,14 +31,14 @@ function App() {
     let todolistsId1 = v1()
     let todolistsId2 = v1()
 
-    let [todolists, setTodolists] = useState<Array<TodolistsType>>(
+    let [todolists, setTodolists] = useState<TodolistsType>(
         [
             {id: todolistsId1, title: "First todolist", filter: "All"},
             {id: todolistsId2, title: "Second todolist", filter: "All"},
         ]
     )
 
-    const [tasks, setTasks] = useState<TaskType>({
+    const [tasks, setTasks] = useState<TasksType>({
         [todolistsId1]: [
             {id: v1(), title: "HTML&CSS1", isDone: true},
             {id: v1(), title: "JS1", isDone: true},
@@ -44,27 +53,23 @@ function App() {
         ]
     })
     const removeOneTask = (id: string, tlId: string) => {
-        let todolistTasks = tasks[tlId]
-        tasks[tlId] = todolistTasks.filter((el) => el.id !== id)
-        setTasks({...tasks})
+        setTasks(TasksReducer(tasks,removeTaskAC(tlId, id)))
 
     }
     const addTask = (title: string, tlId: string) => {
-        let task = {id: v1(), title: title, isDone: false}
-        let todolistTasks = tasks[tlId]
-        tasks[tlId] = [task, ...todolistTasks]
-        setTasks({...tasks})
-
+        setTasks(TasksReducer(tasks,addTaskAC(title, tlId)))
     }
+    const changeTitleTask = (title: string, taskId: string, tlId: string,) => {
+        setTasks(TasksReducer(tasks, changeTitleTaskAC(title,taskId,tlId)))
+    }
+
     const changeStatus = (taskId: string, isDone: boolean, tlId: string) => {
-        let todolistTasks = tasks[tlId]
-        const task = todolistTasks.find(t => t.id === taskId)
-        if (task) {
-            task.isDone = isDone
-        }
-        setTasks({...tasks});
-
-
+        // let todolistTasks = tasks[tlId]
+        // const task = todolistTasks.find(t => t.id === taskId)
+        // if (task) {
+        //     task.isDone = isDone
+        // }
+        setTasks(TasksReducer(tasks,changeStatusTaskAC(taskId,isDone,tlId)));
     }
     const filterTask = (filterValue: filterValueType, tlId: string) => {
         let todolist = todolists.find((tl) => tl.id === tlId)
@@ -73,32 +78,21 @@ function App() {
         }
         setTodolists([...todolists]);
     }
+
     const removeTodolist = (tlId: string) => {
-        setTodolists(todolists.filter((tl) => tl.id !== tlId))
+        setTodolists(TodolistsReducer(todolists,removeTodolistAC(tlId)))
         delete tasks[tlId]
         setTasks({...tasks})
 
     }
     const addTodolist = (title: string) => {
         let newTodolistId = v1()
-        let newTodolist: TodolistsType = {id: newTodolistId, title: title, filter: "All"}
-        setTodolists([newTodolist, ...todolists])
+        setTodolists(TodolistsReducer(todolists,addTodolistAC(title,newTodolistId)))
         setTasks({...tasks, [newTodolistId]: []})
 
     }
-    const changeTitleTask = (title: string, taskId: string, tlId: string,) => {
-        let todolistTasks = tasks[tlId]
-        const task = todolistTasks.find(t => t.id === taskId)
-        if (task) {
-            task.title = title
-        }
-        setTasks({...tasks})
-    }
     const changeTitleTodolist = (title: string, tlId: string) => {
-        let todolist = todolists.find(tl => tl.id === tlId)
-        if (todolist) {
-            todolist.title = title
-        }
+        setTodolists(TodolistsReducer(todolists,changeTitleTodolistAC(title, tlId)))
         setTasks({...tasks})
     }
 
